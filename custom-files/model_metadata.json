@@ -1,26 +1,57 @@
 {
     "action_space": [
-        {"steering_angle": 4.8021, "speed": 1.7655},
- {"steering_angle": -10.4524, "speed": 3.4095},
- {"steering_angle": -0.996, "speed": 2.4719},
- {"steering_angle": -4.9738, "speed": 1.5757},
- {"steering_angle": -0.1183, "speed": 3.9443},
- {"steering_angle": 5.2007, "speed": 3.4679},
- {"steering_angle": -13.0199, "speed": 1.8181},
- {"steering_angle": 11.6897, "speed": 2.4724},
- {"steering_angle": -8.7292, "speed": 2.9033},
- {"steering_angle": 4.5122, "speed": 1.5534},
- {"steering_angle": 15.2415, "speed": 1.5922},
- {"steering_angle": -7.3448, "speed": 2.1616},
- {"steering_angle": 3.7643, "speed": 2.1961},
- {"steering_angle": 3.0163, "speed": 2.8115},
- {"steering_angle": 15.6332, "speed": 1.92},
- {"steering_angle": 4.4668, "speed": 3.1347},
- {"steering_angle": -13.4576, "speed": 2.4753},
- {"steering_angle": -3.2376, "speed": 1.8773},
- {"steering_angle": 4.416, "speed": 1.9283},
- {"steering_angle": 30.0, "speed": 1.5},
- {"steering_angle": -30.0, "speed": 1.5}
+        {
+            "steering_angle": -30,
+            "speed": 1.4
+        },
+        {
+            "steering_angle": -10,
+            "speed": 3.8
+        },
+        {
+            "steering_angle": -6.5,
+            "speed": 3.2
+        },
+        {
+            "steering_angle": -3.3,
+            "speed": 2.5
+        },
+        {
+            "steering_angle": -3.1,
+            "speed": 1.6
+        },
+        {
+            "steering_angle": 2.3,
+            "speed": 3.9
+        },
+        {
+            "steering_angle": 3.9,
+            "speed": 2.0
+        },
+        {
+            "steering_angle": 7.5,
+            "speed": 2.8
+        },
+        {
+            "steering_angle": 7.8,
+            "speed": 3.3
+        },
+        {
+            "steering_angle": 8.9,
+            "speed": 1.5
+        },
+        {
+            "steering_angle": 12.8,
+            "speed": 2.4
+        },
+        {
+            "steering_angle": 20.9,
+            "speed": 1.5
+        },
+        {
+            "steering_angle": 30,
+            "speed": 1.4
+        }
     ],
     "sensor": ["FRONT_FACING_CAMERA"],
     "neural_network": "DEEP_CONVOLUTIONAL_NETWORK_SHALLOW",
