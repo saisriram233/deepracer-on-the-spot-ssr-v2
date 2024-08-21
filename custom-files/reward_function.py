@@ -2,10 +2,14 @@ import math
 
 
 class Reward:
-    def __init__(self):
+    def __init__(self, verbose=False):
         self.first_racingpoint_index = 0
+        self.verbose = verbose
 
     def reward_function(self, params):
+
+        # Import package (needed for heading)
+        import math
 
         ################## HELPER FUNCTIONS ###################
 
@@ -33,7 +37,7 @@ class Reward:
             return [closest_index, second_closest_index]
 
         def dist_to_racing_line(closest_coords, second_closest_coords, car_coords):
-
+            
             # Calculate the distances between 2 closest racing points
             a = abs(dist_2_points(x1=closest_coords[0],
                                   x2=second_closest_coords[0],
@@ -109,6 +113,38 @@ class Reward:
                 direction_diff = 360 - direction_diff
 
             return direction_diff
+
+        # Gives back indexes that lie between start and end index of a cyclical list 
+        # (start index is included, end index is not)
+        def indexes_cyclical(start, end, array_len):
+
+            if end < start:
+                end += array_len
+
+            return [index % array_len for index in range(start, end)]
+
+        # Calculate how long car would take for entire lap, if it continued like it did until now
+        def projected_time(first_index, closest_index, step_count, times_list):
+
+            # Calculate how much time has passed since start
+            current_actual_time = (step_count-1) / 15
+
+            # Calculate which indexes were already passed
+            indexes_traveled = indexes_cyclical(first_index, closest_index, len(times_list))
+
+            # Calculate how much time should have passed if car would have followed optimals
+            current_expected_time = sum([times_list[i] for i in indexes_traveled])
+
+            # Calculate how long one entire lap takes if car follows optimals
+            total_expected_time = sum(times_list)
+
+            # Calculate how long car would take for entire lap, if it continued like it did until now
+            try:
+                projected_time = (current_actual_time/current_expected_time) * total_expected_time
+            except:
+                projected_time = 9999
+
+            return projected_time
 
         #################### RACING LINE ######################
 
@@ -196,9 +232,7 @@ class Reward:
         optimals = racing_track[closest_index]
         optimals_second = racing_track[second_closest_index]
 
-        # Save first racingpoint of episode for later
-        if self.verbose == True:
-            self.first_racingpoint_index = 0 # this is just for testing purposes
+        
         if steps == 1:
             self.first_racingpoint_index = closest_index
 
