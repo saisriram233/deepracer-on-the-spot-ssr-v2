@@ -1,66 +1,48 @@
-import numpy as np
+import math
 
-def reward_function(params):
-    
+def reward_function(params) :
 
-    # Read input parameters
-    track_width = params['track_width']
-    distance_from_center = params['distance_from_center']
-    all_wheels_on_track = params['all_wheels_on_track']
-    steering_angle = params['steering_angle']
+    max_speed = 3.8
+    speed_control = -5
+    center_lane = [0,1,2,3,4,5,6,7,8,9,10,11,35,36,37,38,165,166,167,168,169,202,203,204,205,206,207,208,209]
+    reward = 0.001
+   
+    # Read input variables
+    x = params['x']
+    y = params['y']
     speed = params['speed']
-    steps = params['steps']
-    progress = params['progress']
-    closest_waypoints = params['closest_waypoints']
-    waypoints = params['waypoints']
     heading = params['heading']
+    waypoints = params['waypoints']
+    is_offtrack = params['is_offtrack']
+    steering = abs(params['steering_angle'])
+    closest_waypoints = params['closest_waypoints']
+    all_wheels_on_track = params['all_wheels_on_track']
+    center_variance = params["distance_from_center"] / params["track_width"]
+   
+   
+    next_waypoint_index = closest_waypoints[1]
+    look_ahead_distance = 4
+    look_ahead_index = (next_waypoint_index + look_ahead_distance) % len(waypoints)
+    look_ahead_waypoint = waypoints[look_ahead_index]
 
-    
-    reward = 1e-3
+    waypoint_x, waypoint_y = look_ahead_waypoint
+    desired_heading = math.degrees(math.atan2(waypoint_y - y, waypoint_x - x))
+   
+    heading_diff = abs(desired_heading - heading)
+    if heading_diff > 180:
+        heading_diff = abs(360 - heading_diff)
+       
+       
+    if not is_offtrack and all_wheels_on_track:
+        reward += round(min(100/(1+abs((max_speed*10)-((speed*10)+heading_diff)+(speed_control/4)*(4-speed))),100))
 
-    
-    if not all_wheels_on_track:
-        return 1e-3  # Immediate low reward if the car is off track
+        if  steering == 0:
+            reward += 50
+        elif steering < 5:
+            reward += 25
 
-    # 2. Reward for staying close to the center line
-    marker_1 = 0.1 * track_width
-    marker_2 = 0.25 * track_width
-    marker_3 = 0.5 * track_width
+        if next_waypoint_index in center_lane and center_variance < 0.4:
+            reward += 50
 
-    if distance_from_center <= marker_1:
-        reward += 3.0
-    elif distance_from_center <= marker_2:
-        reward += 0.5
-    elif distance_from_center <= marker_3:
-        reward += 0.1
-    else:
-        reward += 1e-3  # likely near or off track
 
-    # 3. Adjust speed based on track curvature
-    CURVATURE_THRESHOLD = 10  # Assumed curvature threshold for sharper turns
-    next_waypoint = waypoints[closest_waypoints[1]]
-    prev_waypoint = waypoints[closest_waypoints[0]]
-    track_direction = np.arctan2(next_waypoint[1] - prev_waypoint[1], next_waypoint[0] - prev_waypoint[0])
-    heading_diff = abs(track_direction - np.radians(heading))
-
-    # Penalize sharp turns if speed is too high
-    if heading_diff > CURVATURE_THRESHOLD:
-        if speed > 2.0:
-            reward *= 0.5  # Reduce reward in sharp turns if going too fast
-    else:
-        if speed > 2.5 and distance_from_center <= marker_1:
-            reward += 2.0  # Encourage high speed on straight segments
-        elif speed > 2.0 and distance_from_center <= marker_2:
-            reward += 1.0
-
-    # 4. Penalize zig-zagging or sudden steering changes
-    ABS_STEERING_THRESHOLD = 15
-    if abs(steering_angle) > ABS_STEERING_THRESHOLD:
-        reward *= 0.8  # Reduce reward for sharp steering
-
-    # 5. Reward smooth progress (progress/steps)
-    step_reward = (progress / steps) * 10
-    reward += step_reward
-
-    # Return final reward
     return float(reward)
